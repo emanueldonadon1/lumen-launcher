@@ -73,19 +73,29 @@ Você precisa de uma TV Samsung com Tizen e de um computador na mesma rede Wi-Fi
 3. **Instale pelo GitHub:** digite `emanueldonadon1/lumen-launcher`. Nas TVs de 2023 em diante, ele pede login na conta Samsung uma vez, para assinar o app para a sua TV.
 4. **Deixe a um clique:** mova o Lumen para o **primeiro lugar** da barra do Smart Hub. Em algumas TVs, ligar **Autorun Last App** (em Configurações → Geral → Recursos Smart) faz a TV ligar direto no Lumen.
 
+#### Assinatura do pacote
+
+O `LumenLauncher.wgt` das releases já vem **assinado** com o certificado de autor Tizen do Lumen e o certificado público de distribuidor da Tizen, igual ao que o Tizen Studio gera. Isso é necessário porque:
+
+- **Nas TVs até 2022 (Tizen ≤ 6)**, o TizenBrew Installer instala o pacote do jeito que baixou. Um pacote sem assinatura é recusado com `install failed[118, -12] Check certificate error`.
+- **Nas TVs de 2023 em diante (Tizen 7+)**, o TizenBrew assina de novo com o seu certificado Samsung.
+
+A assinatura é feita no GitHub Actions por [`tools/sign.ps1`](tools/sign.ps1), que roda em PowerShell 7 sem precisar do Tizen Studio. Para conferir um pacote: `pwsh tools/sign.ps1 -Verify LumenLauncher.wgt`.
+
 #### Instalação manual (sem TizenBrew)
 
-Requer Python 3 e um certificado Samsung criado no *Certificate Manager* do Tizen Studio, com o DUID da sua TV.
+Requer Python 3 e PowerShell 7. Use o `.wgt` assinado da [última release](https://github.com/emanueldonadon1/lumen-launcher/releases/latest), colocado na raiz do projeto:
 
 ```bash
 git clone https://github.com/emanueldonadon1/lumen-launcher && cd lumen-launcher
-python3 tools/build.py --sign MEU_PERFIL    # gera LumenLauncher.wgt assinado
-python3 tools/install.py 192.168.1.50       # instala direto na TV, sem sdb/Tizen Studio
+gh release download -p LumenLauncher.wgt     # ou baixe pelo navegador
+python3 tools/install.py 192.168.1.50        # instala direto na TV, sem sdb/Tizen Studio
 python3 tools/install.py 192.168.1.50 --uninstall
 ```
 
-O `tools/install.py` explica os erros comuns:
-- `failed[118]`: já existe uma cópia assinada com outro certificado. Rode `--uninstall` antes.
+Erros comuns:
+- `failed[118, -12] Check certificate error`: o pacote não está assinado. Use o `.wgt` da release v0.3.1 em diante.
+- `failed[118]` depois de uma instalação que falhou: pode ter sobrado uma cópia assinada com outro certificado. Rode `--uninstall` antes.
 - `failed[116]`: falta espaço livre na TV.
 
 ### Desenvolver

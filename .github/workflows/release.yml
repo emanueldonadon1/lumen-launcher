@@ -1,6 +1,11 @@
-# On a version tag (v0.2.0, ...): build the UNSIGNED .wgt and attach it to a GitHub release.
-# TizenBrew Installer ("Install from GitHub" -> emanueldonadon1/lumen-launcher) downloads that
-# .wgt and signs it with the user's own Samsung certificate.
+# On a version tag (v0.3.1, ...): build the .wgt, SIGN it, and attach it to a GitHub release.
+#
+# Why signed here: TizenBrew Installer re-signs packages only on Tizen 7+ (2023+ TVs). On older TVs
+# (e.g. a 2021 Q60A on Tizen 6) it installs the .wgt exactly as downloaded, and the TV refuses an
+# unsigned one with "install failed[118, -12] Check certificate error".
+#
+# Signature = Lumen's Tizen author certificate (repository secrets TIZEN_AUTHOR_P12 / TIZEN_AUTHOR_PASSWORD)
+#           + Tizen's public distributor certificate (from Tizen Studio's certificate kit).
 name: release
 
 on:
@@ -27,6 +32,31 @@ jobs:
 
       - name: Build
         run: python3 tools/build.py
+
+      - name: Sign (Tizen author + Tizen public distributor)
+        env:
+          TIZEN_AUTHOR_P12: ${{ secrets.TIZEN_AUTHOR_P12 }}
+          TIZEN_AUTHOR_PASSWORD: ${{ secrets.TIZEN_AUTHOR_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$TIZEN_AUTHOR_P12" || { echo "::error::secret TIZEN_AUTHOR_P12 is missing"; exit 1; }
+          C="$RUNNER_TEMP/certs"; mkdir -p "$C"
+          echo "$TIZEN_AUTHOR_P12" | base64 -d > "$C/author.p12"
+
+          # Tizen Studio's certificate kit (official download), pinned by hash
+          curl -fsSL -o "$C/cg.zip" https://download.tizen.org/sdk/tizenstudio/official/binary/certificate-generator_0.1.4_ubuntu-64.zip
+          echo "446aa52f249205f4ad573173b02c9c38aa5de0316028b77dd189e44fd5f75964  $C/cg.zip" | sha256sum -c -
+          unzip -q -j "$C/cg.zip" 'data/tools/certificate-generator/certificates/distributor/sdk-public/tizen-distributor-signer.p12' -d "$C"
+
+          # That .p12 uses RC2-40, which .NET on Linux can't open: re-wrap it with modern encryption
+          DPW=$(openssl rand -hex 16)
+          openssl pkcs12 -legacy -in "$C/tizen-distributor-signer.p12" -passin pass:tizenpkcs12passfordsigner -nodes -out "$C/dist.pem"
+          openssl pkcs12 -export -in "$C/dist.pem" -passout "pass:$DPW" -out "$C/distributor.p12"
+
+          pwsh tools/sign.ps1 -In LumenLauncher.wgt -Author "$C/author.p12" -AuthorPassword "$TIZEN_AUTHOR_PASSWORD" \
+                              -Distributor "$C/distributor.p12" -DistributorPassword "$DPW"
+          pwsh tools/sign.ps1 -Verify LumenLauncher.wgt
+          rm -rf "$C"
 
       - name: Release
         uses: softprops/action-gh-release@v2

@@ -9,7 +9,7 @@
 (function (LL) {
   'use strict';
 
-  LL.version = '0.3.0';
+  LL.version = '0.3.1';
 
   var isTizen = typeof window.tizen !== 'undefined' && !!window.tizen.application;
   var currentApp = null;

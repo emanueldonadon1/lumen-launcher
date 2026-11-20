@@ -2,7 +2,7 @@
 <widget xmlns="http://www.w3.org/ns/widgets"
         xmlns:tizen="http://tizen.org/ns/widgets"
         id="https://github.com/emanueldonadon1/lumen-launcher"
-        version="0.3.0"
+        version="0.3.1"
         viewmodes="maximized">
 
     <!-- package: EXACTLY 10 alphanumeric chars. app id: <package>.<AlphanumericName> -->

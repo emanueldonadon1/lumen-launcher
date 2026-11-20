@@ -16,3 +16,8 @@ signature1.xml
 # OS
 Thumbs.db
 .DS_Store
+
+# Signing material (keep outside the repo)
+author.password
+*.pem
+*.key
