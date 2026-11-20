@@ -1,0 +1,15 @@
+/*
+ * Performance tiers (set on <html> by platform.js from navigator.deviceMemory,
+ * or forced in Settings > Performance).
+ *
+ * tier-flat: animations kept, no soft shadows on moving parts.
+ * tier-lite: also no glow, smaller focus scale (less to rasterize), and
+ *            shorter transitions - for ~1.5 GB sets like many 2021 models.
+ */
+.tier-flat .tile::after,
+.tier-lite .tile::after { display: none; }
+
+.tier-lite .boot__glow { display: none; }
+.tier-lite .tile__name { text-shadow: none; }
+.tier-lite { --focus-scale: 1.06; --t-fast: 110ms; --t-med: 160ms; }
+.tier-lite .tile__art::after { display: none; }

@@ -1,0 +1,141 @@
+/* ---------- Background layers ---------- */
+.wp {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 1200ms ease;
+}
+.wp.is-on { opacity: 1; }
+/* Day sky: blue top (white clock stays legible), warm horizon, dark scrim at the bottom from .wallpaper::after */
+.wp--day {
+  background:
+    radial-gradient(ellipse 55% 45% at 82% 18%, rgba(255, 236, 180, 0.45), rgba(255, 236, 180, 0) 70%),
+    linear-gradient(175deg, #1f4e86 0%, #3f7fbf 38%, #8db6d9 68%, #e7b98a 100%);
+}
+.wp--photo { background-size: cover; background-position: center; }
+.wp--photo:not(.is-loaded) { opacity: 0; }
+.wallpaper { z-index: 0; }          /* own stacking context: the scrim must stay inside it */
+.wallpaper::after { z-index: 1; }   /* scrim above every background layer */
+
+/* ---------- Dimmer (over Lumen only; apps opened from it are not affected) ---------- */
+.dim {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 90;
+  transition: opacity 1s ease;
+}
+.toast { z-index: 95; }
+
+/* ---------- Weather chip (top bar) ---------- */
+.wchip {
+  position: relative;
+  display: flex; align-items: center;
+  height: 72px;
+  padding: 0 26px 0 16px;
+  border-radius: 36px;
+  background: var(--c-surface);
+  font-size: 30px;
+  transform: translateZ(0) scale(1);
+  transition: transform var(--t-fast) var(--ease-out), color var(--t-fast) ease;
+}
+.wchip::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  background: #fff;
+  opacity: 0;
+  transition: opacity var(--t-fast) ease;
+}
+.wchip > * { position: relative; }
+.wchip__icon { width: 48px; height: 48px; margin-right: 8px; }
+.wchip.is-focused { transform: translateZ(0) scale(1.08); color: #111; }
+.wchip.is-focused::before { opacity: 1; }
+
+/* ---------- Poster tile (TMDB picks) ---------- */
+.tile--poster .tile__art { background-size: cover; background-position: center; background-color: #1b1d22; }
+.tile--poster .tile__art::after { display: none; }
+.tile__shade {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 40px 16px 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+}
+.tile__title {
+  display: block;
+  font-size: 22px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ---------- Panels: sections, dim rows, actions ---------- */
+.panel__section {
+  margin: 26px 0 10px 28px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+.panel__section:first-child { margin-top: 0; }
+.row--dim .row__label { opacity: 0.5; }
+.row--info .row__label { font-size: 22px; }
+.panel__actions {
+  position: absolute;
+  left: 64px; right: var(--safe-x); bottom: var(--safe-y);
+}
+
+/* ---------- Weather panel ---------- */
+.wx { font-size: 24px; }
+.wx__city { font-size: 26px; color: var(--c-text-dim); margin-bottom: 10px; }
+.wx__empty { margin-top: 30px; color: var(--c-text-dim); }
+.wx__now { display: flex; align-items: center; }
+.wx__bigicon { width: 120px; height: 120px; margin-right: 22px; }
+.wx__temp { font-size: 96px; font-weight: 200; line-height: 1; }
+.wx__desc { font-size: 30px; margin-top: 6px; }
+.wx__facts { display: flex; flex-wrap: wrap; margin: 18px 0 8px; }
+.wx__fact {
+  margin: 0 12px 12px 0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--c-surface);
+  font-size: 21px;
+}
+.wx__hours { display: flex; justify-content: space-between; margin: 6px 0 10px; }
+.wx__hour { display: flex; flex-direction: column; align-items: center; width: 80px; }
+.wx__label { font-size: 19px; color: var(--c-text-dim); }
+.wx__icon { display: block; width: 46px; height: 46px; margin: 4px 0; }
+.wx__value { font-size: 22px; }
+.wx__day {
+  display: flex; align-items: center;
+  height: 46px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.wx__dayname { width: 120px; text-transform: capitalize; }
+.wx__day .wx__icon { margin: 0 24px 0 0; width: 40px; height: 40px; }
+.wx__range { color: var(--c-text-dim); }
+
+/* ---------- City picker ---------- */
+.city__list { width: 1100px; margin-top: 30px; }
+.city__list .row { background: var(--c-surface); }
+.city__list .row--text { margin-bottom: 18px; }
+.city__status { min-height: 40px; margin: 0 0 10px 28px; font-size: 24px; color: var(--c-text-dim); }
+
+/* ---------- Screensaver ---------- */
+.saver {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  background: #000;
+  z-index: 80;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 800ms ease, visibility 0s linear 800ms;
+}
+.saver.is-on { opacity: 1; visibility: visible; transition: opacity 800ms ease; }
+.saver__box {
+  position: absolute; top: 0; left: 0;
+  color: rgba(255, 255, 255, 0.82);     /* not full white: kinder to OLED panels */
+  transition: transform 2s ease;
+}
+.saver__time { font-size: 180px; font-weight: 200; line-height: 1; letter-spacing: -0.02em; }
+.saver__meta { display: flex; align-items: center; margin-top: 16px; font-size: 34px; color: rgba(255, 255, 255, 0.6); }
+.saver__date::first-letter { text-transform: uppercase; }
+.saver__icon { width: 48px; height: 48px; margin: 0 8px 0 28px; }
+.saver__icon:empty { display: none; }

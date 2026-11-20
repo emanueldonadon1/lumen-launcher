@@ -1,0 +1,24 @@
+# Cheap guards for the Tizen 6.0 target (Chromium M76).
+name: check
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: config.xml is valid XML
+        run: python3 -c "import xml.dom.minidom,sys; xml.dom.minidom.parse('src/config.xml')"
+
+      - name: JS parses as ES2017 (no ?. / ?? / newer syntax)
+        run: |
+          npm install --no-save --silent acorn@8.11.3
+          for f in src/js/*.js src/js/*/*.js; do
+            npx acorn --ecma2017 --silent "$f" || { echo "::error file=$f::not valid ES2017"; exit 1; }
+          done
+
+      - name: No CSS that M76 lacks (flex gap, aspect-ratio, inset, :focus-visible)
+        run: |
+          ! grep -nE '(^|[^-])gap:|aspect-ratio|(^|[^-])inset:|:focus-visible' src/css/*.css

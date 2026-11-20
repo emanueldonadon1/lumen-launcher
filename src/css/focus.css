@@ -1,0 +1,78 @@
+/*
+ * All focus visuals live here. Rules:
+ *  - Only transform/opacity transition (GPU compositor).
+ *  - Ring and shadow are pre-rendered pseudo-elements whose OPACITY animates,
+ *    never box-shadow/border themselves (repaint-heavy on Tizen GPUs).
+ */
+
+/* ---------- App tile ---------- */
+.tile {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--tile-w);
+  height: var(--tile-h);
+  margin-right: var(--tile-gap);
+  border-radius: var(--tile-radius);
+  transform: translateZ(0) scale(1);
+  transition: transform var(--t-fast) var(--ease-out);
+}
+.tile::before {                         /* focus ring */
+  content: "";
+  position: absolute; top: -7px; left: -7px; right: -7px; bottom: -7px;
+  border: 4px solid #fff;
+  border-radius: calc(var(--tile-radius) + 7px);
+  opacity: 0;
+  transition: opacity var(--t-fast) ease;
+}
+.tile::after {                          /* drop shadow */
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--t-fast) ease;
+}
+.tile.is-focused { transform: translateZ(0) scale(var(--focus-scale)); z-index: 2; }
+.tile.is-focused::before,
+.tile.is-focused::after { opacity: 1; }
+.tile.is-focused.is-pressed { transform: translateZ(0) scale(1.04); transition-duration: 90ms; }
+
+.tile__label {
+  position: absolute; left: 0; right: 0; top: 100%;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 22px;
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--ease-out);
+}
+.tile.is-focused .tile__label { opacity: 1; transform: translateY(0); }
+
+/* ---------- Round icon button ---------- */
+.icon-btn {
+  position: relative;
+  width: 72px; height: 72px;
+  margin-left: 20px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--c-surface);
+  color: var(--c-text);
+  transform: translateZ(0) scale(1);
+  transition: transform var(--t-fast) var(--ease-out), color var(--t-fast) ease;
+}
+.icon-btn::before {                     /* white "fill" revealed on focus */
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transition: opacity var(--t-fast) ease;
+}
+.icon-btn svg { position: relative; }
+.icon-btn.is-focused { transform: translateZ(0) scale(1.12); color: #111; }
+.icon-btn.is-focused::before { opacity: 1; }

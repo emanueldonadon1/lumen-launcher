@@ -1,0 +1,35 @@
+# On a version tag (v0.2.0, ...): build the UNSIGNED .wgt and attach it to a GitHub release.
+# TizenBrew Installer ("Install from GitHub" -> emanueldonadon1/lumen-launcher) downloads that
+# .wgt and signs it with the user's own Samsung certificate.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  wgt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check config.xml version matches the tag
+        run: |
+          v=$(python3 -c "import re;print(re.search(r'<widget[^>]*\sversion=\"([^\"]+)\"', open('src/config.xml').read(), re.S).group(1))")
+          test "v$v" = "${GITHUB_REF_NAME}" || { echo "config.xml is $v but tag is ${GITHUB_REF_NAME}"; exit 1; }
+
+      - name: Build
+        run: python3 tools/build.py
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: LumenLauncher.wgt
+          generate_release_notes: true

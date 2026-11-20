@@ -1,0 +1,75 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;           /* never native-scroll: all movement is transform-based */
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.is-tizen body { cursor: none; }
+
+.app {
+  position: absolute; top: 0; left: 0;
+  width: 1920px; height: 1080px;
+  opacity: 0;
+}
+body.is-ready .app { opacity: 1; transition: opacity var(--t-slow) ease; }
+
+/* ---------- Screens ---------- */
+.screen {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  padding: var(--safe-y) var(--safe-x);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-med) ease, visibility 0s linear var(--t-med);
+}
+.screen.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--t-med) ease;
+}
+
+/* ---------- Wallpaper (static gradients: painted once, then cached) ---------- */
+.wallpaper {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(70, 90, 200, 0.35), rgba(70, 90, 200, 0) 70%),
+    radial-gradient(ellipse 50% 45% at 85% 75%, rgba(150, 60, 170, 0.25), rgba(150, 60, 170, 0) 70%),
+    linear-gradient(160deg, #0b0e1a 0%, #05060b 100%);
+  transition: opacity var(--t-slow) ease, visibility 0s linear 0s;
+}
+.wallpaper.has-image { background-size: cover; background-position: center; }
+.wallpaper::after {           /* legibility scrim */
+  content: "";
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 55%),
+              linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 30%);
+}
+/* Pure black (OLED/QLED friendly). visibility drops the layer after the fade */
+body.theme-oled .wallpaper {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-slow) ease, visibility 0s linear var(--t-slow);
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: absolute; left: 50%; bottom: 72px;
+  max-width: 1200px;
+  padding: 18px 36px;
+  border-radius: 40px;
+  background: rgba(30, 32, 40, 0.96);
+  color: var(--c-text);
+  font-size: 26px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 24px);
+  transition: opacity var(--t-med) ease, transform var(--t-med) var(--ease-out);
+  z-index: 50;
+}
+.toast.is-visible { opacity: 1; transform: translate(-50%, 0); }

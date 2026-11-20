@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, height=1080, user-scalable=no">
+  <title>Lumen Launcher</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/boot.css">
+  <link rel="stylesheet" href="css/focus.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/extras.css">
+  <link rel="stylesheet" href="css/tiers.css">
+</head>
+<body class="is-booting">
+
+  <!-- Boot screen: pure CSS, starts animating before any JS runs -->
+  <div id="boot" class="boot" aria-hidden="true">
+    <div class="boot__glow"></div>
+    <svg class="boot__mark" viewBox="0 0 120 120" width="160" height="160">
+      <defs>
+        <linearGradient id="lumen-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset="1" stop-color="#8ab4ff"/>
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="60" r="52" fill="none" stroke="url(#lumen-grad)" stroke-width="6"/>
+      <circle cx="60" cy="60" r="20" fill="url(#lumen-grad)"/>
+    </svg>
+    <div class="boot__word">lumen</div>
+    <div class="boot__bar"><span></span></div>
+  </div>
+
+  <div id="app" class="app">
+    <!-- Background: night sky (base), day sky and photo layers cross-fade on top -->
+    <div id="wallpaper" class="wallpaper">
+      <div id="wp-day" class="wp wp--day"></div>
+      <div id="wp-photo" class="wp wp--photo"></div>
+    </div>
+
+    <!-- ============ Home ============ -->
+    <section class="screen" data-screen="home">
+      <div class="home__page">
+        <header class="topbar">
+          <div class="clock">
+            <div class="clock__greeting" id="clock-greeting"></div>
+            <div class="clock__time" id="clock-time">--:--</div>
+            <div class="clock__date" id="clock-date"></div>
+          </div>
+          <div class="topbar__actions">
+            <div class="wchip" role="button" data-action="weather" data-i18n-label="weather" style="display:none">
+              <span class="wchip__icon"></span><span class="wchip__temp"></span>
+            </div>
+            <div class="icon-btn" role="button" data-action="inputs" data-i18n-label="inputs">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>
+                <path d="M9 9.5h6v3H9z" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="icon-btn" role="button" data-action="apps" data-i18n-label="allApps">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+              </svg>
+            </div>
+            <div class="icon-btn" role="button" data-action="settings" data-i18n-label="settings">
+              <svg viewBox="0 0 24 24" width="32" height="32">
+                <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/>
+              </svg>
+            </div>
+          </div>
+        </header>
+
+        <div class="home__rows">
+          <section class="row-block" data-row="favorites">
+            <h2 class="row-title" data-i18n="favorites"></h2>
+            <div class="carousel"><div class="carousel__track"></div></div>
+          </section>
+          <section class="row-block" data-row="picks" style="display:none">
+            <h2 class="row-title" data-i18n="picks"></h2>
+            <div class="carousel"><div class="carousel__track"></div></div>
+          </section>
+          <section class="row-block" data-row="recents" style="display:none">
+            <h2 class="row-title" data-i18n="recents"></h2>
+            <div class="carousel"><div class="carousel__track"></div></div>
+          </section>
+        </div>
+      </div>
+
+      <footer class="hints">
+        <span class="hint"><i class="dot dot--red"></i><span data-i18n="hintTheme"></span></span>
+        <span class="hint"><i class="dot dot--green"></i><span data-i18n="hintApps"></span></span>
+        <span class="hint"><i class="dot dot--yellow"></i><span data-i18n="hintInputs"></span></span>
+        <span class="hint"><i class="dot dot--blue"></i><span data-i18n="hintSettings"></span></span>
+        <span class="hint"><i class="key">1–9</i><span data-i18n="favorites"></span></span>
+      </footer>
+    </section>
+
+    <!-- ============ All apps ============ -->
+    <section class="screen sheet" data-screen="apps">
+      <h1 class="sheet__title" data-i18n="allApps"></h1>
+      <div class="sheet__viewport">
+        <div class="grid"></div>
+        <p class="sheet__empty" data-i18n="noApps"></p>
+      </div>
+      <footer class="hints">
+        <span class="hint"><i class="dot dot--yellow"></i><span data-i18n="hintFav"></span></span>
+        <span class="hint"><i class="key">↩</i><span data-i18n="hintBack"></span></span>
+      </footer>
+    </section>
+
+    <!-- ============ Settings (side panel) ============ -->
+    <section class="screen screen--overlay" data-screen="settings">
+      <aside class="panel">
+        <h1 class="panel__title" data-i18n="settings"></h1>
+        <div class="panel__viewport">
+          <div class="panel__list"></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ============ Weather (side panel) ============ -->
+    <section class="screen screen--overlay" data-screen="weather">
+      <aside class="panel">
+        <h1 class="panel__title" data-i18n="weather"></h1>
+        <div class="wx"></div>
+        <div class="panel__actions">
+          <div class="row" role="button" data-action="city"><span class="row__label" data-i18n="changeCity"></span><span class="row__value">›</span></div>
+          <div class="row" role="button" data-action="refresh"><span class="row__label" data-i18n="refresh"></span><span class="row__value">↻</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ============ Inputs (side panel) ============ -->
+    <section class="screen screen--overlay" data-screen="inputs">
+      <aside class="panel">
+        <h1 class="panel__title" data-i18n="inputs"></h1>
+        <div class="panel__viewport">
+          <div class="panel__list"></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ============ City picker ============ -->
+    <section class="screen sheet" data-screen="city">
+      <h1 class="sheet__title" data-i18n="cityTitle"></h1>
+      <div class="city__list">
+        <label class="row row--text" role="button" data-action="field">
+          <span class="row__label" data-i18n="citySearch"></span>
+          <input name="city" class="row__input" type="text" maxlength="60" tabindex="-1" autocomplete="off">
+        </label>
+        <p class="city__status"></p>
+      </div>
+    </section>
+
+    <!-- ============ Arrange favorites ============ -->
+    <section class="screen sheet" data-screen="shelf">
+      <h1 class="sheet__title" data-i18n="setShelf"></h1>
+      <p class="sheet__help" data-i18n="shelfHelp"></p>
+      <div class="carousel shelf-carousel">
+        <div class="carousel__track"></div>
+      </div>
+      <p class="sheet__empty" data-i18n="shelfEmpty"></p>
+      <footer class="hints">
+        <span class="hint"><i class="key">OK</i><span data-i18n="hintMove"></span></span>
+        <span class="hint"><i class="dot dot--red"></i><span data-i18n="hintRemove"></span></span>
+        <span class="hint"><i class="dot dot--green"></i><span data-i18n="hintEdit"></span></span>
+        <span class="hint"><i class="key">↩</i><span data-i18n="hintBack"></span></span>
+      </footer>
+    </section>
+
+    <!-- ============ Web shortcut editor ============ -->
+    <section class="screen sheet" data-screen="editor">
+      <h1 class="sheet__title"></h1>
+      <div class="form">
+        <label class="field form-item" role="button" data-action="field">
+          <span class="field__label" data-i18n="fieldName"></span>
+          <input name="name" type="text" maxlength="40" tabindex="-1" autocomplete="off">
+        </label>
+        <label class="field form-item" role="button" data-action="field">
+          <span class="field__label" data-i18n="fieldUrl"></span>
+          <input name="url" type="url" maxlength="500" tabindex="-1" autocomplete="off" placeholder="https://…">
+        </label>
+        <div class="field__label" data-i18n="fieldColor"></div>
+        <div class="swatches"></div>
+        <div class="actions">
+          <div class="btn btn--primary form-item" role="button" data-action="save" data-i18n="save"></div>
+          <div class="btn form-item" role="button" data-action="remove" data-i18n="remove"></div>
+          <div class="btn form-item" role="button" data-action="cancel" data-i18n="cancel"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Screensaver: clock drifting on black (burn-in safe) -->
+  <div id="saver" class="saver" aria-hidden="true">
+    <div class="saver__box">
+      <div class="saver__time"></div>
+      <div class="saver__meta">
+        <span class="saver__date"></span>
+        <span class="saver__icon"></span><span class="saver__temp"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="dim" class="dim" aria-hidden="true"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Classic scripts (no ES modules: file:// CORS issues on some firmwares) -->
+  <script defer src="js/core/platform.js"></script>
+  <script defer src="js/data/zones.js"></script>
+  <script defer src="js/core/i18n.js"></script>
+  <script defer src="js/core/http.js"></script>
+  <script defer src="js/core/keys.js"></script>
+  <script defer src="js/core/spatial-nav.js"></script>
+  <script defer src="js/core/router.js"></script>
+  <script defer src="js/services/apps-catalog.js"></script>
+  <script defer src="js/services/installed-apps.js"></script>
+  <script defer src="js/core/store.js"></script>
+  <script defer src="js/services/launcher.js"></script>
+  <script defer src="js/services/clock.js"></script>
+  <script defer src="js/services/place.js"></script>
+  <script defer src="js/services/weather.js"></script>
+  <script defer src="js/services/theme.js"></script>
+  <script defer src="js/services/inputs.js"></script>
+  <script defer src="js/services/picks.js"></script>
+  <script defer src="js/ui/toast.js"></script>
+  <script defer src="js/ui/carousel.js"></script>
+  <script defer src="js/ui/vscroll.js"></script>
+  <script defer src="js/ui/tile.js"></script>
+  <script defer src="js/ui/wicons.js"></script>
+  <script defer src="js/ui/saver.js"></script>
+  <script defer src="js/screens/home.js"></script>
+  <script defer src="js/screens/apps.js"></script>
+  <script defer src="js/screens/settings.js"></script>
+  <script defer src="js/screens/shelf.js"></script>
+  <script defer src="js/screens/editor.js"></script>
+  <script defer src="js/screens/weather.js"></script>
+  <script defer src="js/screens/inputs.js"></script>
+  <script defer src="js/screens/city.js"></script>
+  <script defer src="js/main.js"></script>
+</body>
+</html>

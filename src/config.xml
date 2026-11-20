@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:tizen="http://tizen.org/ns/widgets"
+        id="https://github.com/emanueldonadon1/lumen-launcher"
+        version="0.3.0"
+        viewmodes="maximized">
+
+    <!-- package: EXACTLY 10 alphanumeric chars. app id: <package>.<AlphanumericName> -->
+    <tizen:application id="LumenLnch0.LumenLauncher"
+                       package="LumenLnch0"
+                       required_version="6.0"/>
+
+    <name>Lumen Launcher</name>
+    <description>Minimal, ad-free launcher for Samsung Tizen TVs.</description>
+    <author href="https://github.com/emanueldonadon1">Lumen Launcher contributors</author>
+    <license href="https://opensource.org/licenses/MIT">MIT</license>
+
+    <icon src="icon.png"/>
+    <content src="index.html"/>
+
+    <tizen:profile name="tv-samsung"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+
+    <tizen:setting screen-orientation="landscape"
+                   context-menu="disable"
+                   background-support="disable"
+                   encryption="disable"
+                   install-location="auto"/>
+
+    <!-- Launch installed apps (launch) and URLs in the browser (launchAppControl) -->
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <!-- List installed apps (getAppsInfo) to discover App IDs and icons -->
+    <tizen:privilege name="http://tizen.org/privilege/application.info"/>
+    <!-- Register color/media keys on the remote -->
+    <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+    <!-- Remote wallpapers / icons by URL (optional) -->
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <!-- Switch to TV/HDMI inputs (tvwindow.setSource) and read VIDEOSOURCE -->
+    <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
+    <!-- Local DIAL server (127.0.0.1:8001): fallback to open native built-in apps -->
+    <tizen:privilege name="http://developer.samsung.com/privilege/network.public"/>
+
+    <!-- Keep the app warm in memory for near-instant reopen (ignored if unsupported) -->
+    <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"/>
+
+    <access origin="*" subdomains="true"/>
+    <!-- file: is required to show icons of installed apps returned by getAppsInfo() -->
+    <tizen:content-security-policy>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file: https:; connect-src 'self' https: http://127.0.0.1:8001</tizen:content-security-policy>
+</widget>

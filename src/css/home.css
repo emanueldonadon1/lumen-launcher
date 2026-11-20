@@ -1,0 +1,126 @@
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.clock__greeting {
+  font-size: 28px;
+  color: var(--c-text-dim);
+  margin-bottom: 4px;
+}
+.clock__time {
+  font-size: 112px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.clock__date {
+  margin-top: 12px;
+  font-size: 30px;
+  color: var(--c-text-dim);
+}
+.clock__date::first-letter { text-transform: uppercase; }
+.topbar__actions { display: flex; padding-top: 8px; }
+
+/* ---------- Page + rows (rows bleed to the right edge, Google TV style) ---------- */
+.home__page {
+  position: absolute;
+  top: var(--safe-y); left: var(--safe-x); right: var(--safe-x); bottom: 0;
+  transition: transform 320ms var(--ease-out);
+}
+.topbar, .hints { transition: opacity var(--t-med) ease; }
+.screen.is-scrolled .topbar,
+.screen.is-scrolled .hints { opacity: 0; }
+
+.home__rows {
+  position: absolute;
+  top: 330px;
+  left: 0;
+  right: calc(-1 * var(--safe-x));
+}
+.row-block { height: 330px; }
+.row-title {
+  font-size: 30px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.carousel {
+  position: relative;
+  height: calc(var(--tile-h) + 110px);   /* room for scale + label */
+}
+.carousel__track {
+  display: flex;
+  padding-top: 26px;
+  transform: translate3d(0, 0, 0);
+  transition: transform var(--t-med) var(--ease-out);
+  will-change: transform;
+}
+
+.tile__art {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background-color: #2a2d34;
+}
+.tile__art::after {                       /* soft top highlight for depth */
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 50%);
+}
+.tile__name {
+  position: relative;
+  padding: 0 20px;
+  font-size: 36px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.tile__logo { position: relative; max-width: 62%; max-height: 46%; }   /* bundled brand logo */
+.tile__icon { position: relative; max-width: 78%; max-height: 82%; }   /* TV's own icon (iconPath) */
+.tile__star {
+  position: absolute; top: 10px; left: 14px;
+  font-size: 26px;
+  color: #ffd54f;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+.tile__badge {
+  position: absolute; top: 12px; right: 12px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  font-size: 16px; font-weight: 600; letter-spacing: 0.08em;
+  color: #fff;
+}
+
+.tile--add .tile__art {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 2px dashed rgba(255, 255, 255, 0.28);
+}
+.tile--add .tile__name { font-size: 72px; font-weight: 200; text-shadow: none; }
+
+/* ---------- Hints (color keys) ---------- */
+.hints {
+  position: absolute;
+  left: var(--safe-x);
+  bottom: var(--safe-y);
+  display: flex;
+  font-size: 22px;
+  color: var(--c-text-dim);
+}
+.hint { display: flex; align-items: center; margin-right: 40px; }
+.dot {
+  display: inline-block;
+  width: 18px; height: 18px;
+  margin-right: 12px;
+  border-radius: 4px;
+}
+.dot--red    { background: #e53935; }
+.dot--green  { background: #43a047; }
+.dot--yellow { background: #fdd835; }
+.dot--blue   { background: #1e88e5; }
+
+/* Legible over any photo wallpaper (static shadow: painted once) */
+.clock, .row-title { text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45); }

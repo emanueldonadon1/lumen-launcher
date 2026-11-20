@@ -1,0 +1,18 @@
+# Tizen build / signing output
+*.wgt
+.buildResult/
+.sign/
+author-signature.xml
+signature1.xml
+*.p12
+
+# Tizen Studio / IDE
+.project
+.tproject
+.settings/
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
